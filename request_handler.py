@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import create_post, get_all_posts, get_single_post
-from views.user import create_user, login_user
+from views.user_requests import create_user, login_user, get_all_users
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -58,10 +58,16 @@ class HandleRequests(BaseHTTPRequestHandler):
         (resource, id) = self.parse_url() # pylint: disable=unbalanced-tuple-unpacking
 
         if resource == "posts":
-            # if id is not None:
-            #     response = f"{get_single_post(id)}"
-            # else:
+            if id is not None:
+                response = f"{get_single_post(id)}"
+            else:
                 response = f"{get_all_posts()}"
+        
+        if resource == "users":
+            # if id is not None:
+            #     response = f"{get_single_user(id)}"
+            # else:  
+                response = f"{get_all_users()}"
     
         # if len(parsed) == 2:
         #     ( resource, id ) = parsed# pylint: disable=unbalanced-tuple-unpacking
