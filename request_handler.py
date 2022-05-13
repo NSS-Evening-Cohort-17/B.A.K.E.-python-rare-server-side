@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import create_post, get_all_posts, get_single_post
+from views import create_post, get_all_posts, get_single_post, get_all_posts_by_user
 from views.user import create_user, login_user
 
 
@@ -54,24 +54,28 @@ class HandleRequests(BaseHTTPRequestHandler):
         self._set_headers(200)
 
         response = {}
-        # parsed = self.parse_url(self.path)
-        (resource, id) = self.parse_url() # pylint: disable=unbalanced-tuple-unpacking
+        
+        parsed = self.parse_url(self.path)
+        
+        # (resource, id) = self.parse_url() # pylint: disable=unbalanced-tuple-unpacking
 
-        if resource == "posts":
-            # if id is not None:
-            #     response = f"{get_single_post(id)}"
-            # else:
-                response = f"{get_all_posts()}"
+        if len(parsed) == 2:
+            ( resource, id ) = parsed
+            
+            if resource == "posts":
+                # if id is not None:
+                #     response = f"{get_single_post(id)}"
+                # else:
+                    response = f"{get_all_posts()}"
+            # if resource == "my-posts":
+            #     response = f"{get_all_posts_by_user(id)}"
+        
+        elif len(parsed) == 3:
+            ( resource, key, value ) = parsed
+            
+            if key == "user_id" and resource == "my-posts":
+                response = get_all_posts_by_user(value)
     
-        # if len(parsed) == 2:
-        #     ( resource, id ) = parsed# pylint: disable=unbalanced-tuple-unpacking
-
-        #     if resource == "posts":
-        #         if id is not None:
-        #             response = f"{get_single_post(id)}"
-        #         else:
-        #             response = f"{get_all_posts()}"
-
         self.wfile.write(response.encode())
           
     def do_POST(self):
