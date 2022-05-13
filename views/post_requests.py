@@ -98,3 +98,12 @@ def get_single_post(id):
                     data['approved'])
 
         return json.dumps(post.__dict__)
+    
+def delete_post(id):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM post
+        WHERE id = ?
+        """, (id, ))
