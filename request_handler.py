@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import create_post, get_all_posts, get_single_post
+from views import create_post, get_all_posts, get_single_post, update_post
 from views.user_requests import create_user, login_user, get_all_users
 
 
@@ -100,9 +100,19 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         self.wfile.write(response.encode())
 
+
     def do_PUT(self):
-        """Handles PUT requests to the server"""
-        pass
+        self._set_headers(204)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        (resource, id) = self.parse_url()# pylint: disable=unbalanced-tuple-unpacking
+
+        if resource == "editpost":
+            update_post(id, post_body)
+            
+        self.wfile.write("".encode())
 
     def do_DELETE(self):
         """Handle DELETE Requests"""
