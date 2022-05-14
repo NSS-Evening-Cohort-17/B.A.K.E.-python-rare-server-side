@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import create_post, get_all_posts, get_single_post, get_all_posts_by_user
+from views import create_post, get_all_posts, get_single_post, get_all_posts_by_user, delete_post
 from views.user_requests import create_user, login_user, get_all_users
 
 
@@ -54,6 +54,15 @@ class HandleRequests(BaseHTTPRequestHandler):
         self._set_headers(200)
 
         response = ""
+
+        # parsed = self.parse_url(self.path)
+        (resource, id) = self.parse_url() # pylint: disable=unbalanced-tuple-unpacking
+
+        if resource == "posts":
+            if id is not None:
+                response = f"{get_single_post(id)}"
+            else:
+                response = f"{get_all_posts()}"
         
         parsed = self.parse_url()
         
@@ -104,8 +113,15 @@ class HandleRequests(BaseHTTPRequestHandler):
         pass
 
     def do_DELETE(self):
-        """Handle DELETE Requests"""
-        pass
+    # Set a 204 response code
+        self._set_headers(204)
+        
+        (resource, id) = self.parse_url()
+
+        if resource == "posts":
+            delete_post(id)
+
+        self.wfile.write("".encode())
 
 
 def main():
@@ -114,7 +130,6 @@ def main():
     host = ''
     port = 8088
     HTTPServer((host, port), HandleRequests).serve_forever()
-
 
 if __name__ == "__main__":
     main()

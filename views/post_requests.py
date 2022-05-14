@@ -103,6 +103,15 @@ def get_single_post(id):
 
         return json.dumps(post.__dict__)
     
+def delete_post(id):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM posts
+        WHERE id = ?
+        """, (id, ))
+
 def get_all_posts_by_user(user_id):
     with sqlite3.connect('./db.sqlite3') as conn:
         conn.row_factory = sqlite3.Row
@@ -142,3 +151,4 @@ def get_all_posts_by_user(user_id):
         posts.append(post.__dict__)
 
     return json.dumps(posts)
+
