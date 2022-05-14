@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import create_post, get_all_posts, get_single_post, get_all_posts_by_user
-from views.user import create_user, login_user
+from views.user_requests import create_user, login_user, get_all_users
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -53,9 +53,9 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handle Get requests to the server"""
         self._set_headers(200)
 
-        response = {}
+        response = ""
         
-        parsed = self.parse_url(self.path)
+        parsed = self.parse_url()
         
         # (resource, id) = self.parse_url() # pylint: disable=unbalanced-tuple-unpacking
 
@@ -63,12 +63,12 @@ class HandleRequests(BaseHTTPRequestHandler):
             ( resource, id ) = parsed
             
             if resource == "posts":
-                # if id is not None:
-                #     response = f"{get_single_post(id)}"
-                # else:
+                if id is not None:
+                    response = f"{get_single_post(id)}"
+                else:
                     response = f"{get_all_posts()}"
-            # if resource == "my-posts":
-            #     response = f"{get_all_posts_by_user(id)}"
+            if resource == "users":
+                response = f"{get_all_users()}"
         
         elif len(parsed) == 3:
             ( resource, key, value ) = parsed
@@ -84,7 +84,8 @@ class HandleRequests(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         post_body = json.loads(self.rfile.read(content_len))
         response = ''
-        resource, _ = self.parse_url()
+        resource, _ = self.parse_url() # pylint: disable=unbalanced-tuple-unpacking
+
         
         new_post = None
 

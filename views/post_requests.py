@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from models import Post
+from models import Post, Post2
 
 def create_post(post):
     """Adds a post to the database when they register
@@ -47,8 +47,11 @@ def get_all_posts():
             p.publication_date,
             p.image_url,
             p.content,
-            p.approved
-        FROM Posts p            
+            p.approved,
+            u.username
+        FROM Posts p 
+        JOIN Users u 
+        ON p.user_id = u.id            
         """)
         
     posts = []
@@ -56,14 +59,15 @@ def get_all_posts():
     dataset = db_cursor.fetchall()
     
     for row in dataset:
-        post = Post(row['id'],
+        post = Post2(row['id'],
                     row['user_id'],
                     row['category_id'],
                     row['title'],
                     row['publication_date'],
                     row['image_url'],
                     row['content'],
-                    row['approved'])
+                    row['approved'],
+                    row['username'])
         posts.append(post.__dict__)
 
     return json.dumps(posts)
@@ -113,9 +117,12 @@ def get_all_posts_by_user(user_id):
             p.publication_date,
             p.image_url,
             p.content,
-            p.approved
+            p.approved,
+            u.username
         FROM Posts p
-        WHERE p.user_id = ?            
+        JOIN Users u 
+        ON p.user_id = u.id 
+        WHERE p.user_id = ?
         """, ( user_id, ))
         
     posts = []
@@ -123,14 +130,15 @@ def get_all_posts_by_user(user_id):
     dataset = db_cursor.fetchall()
     
     for row in dataset:
-        post = Post(row['id'],
+        post = Post2(row['id'],
                     row['user_id'],
                     row['category_id'],
                     row['title'],
                     row['publication_date'],
                     row['image_url'],
                     row['content'],
-                    row['approved'])
+                    row['approved'],
+                    row['username'])
         posts.append(post.__dict__)
 
     return json.dumps(posts)
