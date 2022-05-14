@@ -1,7 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import create_post, get_all_posts, get_single_post, dele
-from views.post_requests import delete_post 
+from views import create_post, get_all_posts, get_single_post, delete_post
 from views.user_requests import create_user, login_user, get_all_users
 
 
@@ -54,7 +53,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handle Get requests to the server"""
         self._set_headers(200)
 
-        response = {}
+        response = ""
         # parsed = self.parse_url(self.path)
         (resource, id) = self.parse_url() # pylint: disable=unbalanced-tuple-unpacking
 
@@ -108,15 +107,12 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_DELETE(self):
     # Set a 204 response code
         self._set_headers(204)
+        
+        (resource, id) = self.parse_url()
 
-        # Parse the URL
-        (resource, id) = self.parse_url(self.path)
-
-        # Delete a single animal from the list
         if resource == "posts":
             delete_post(id)
 
-        # Encode the new animal and send in response
         self.wfile.write("".encode())
 
 
