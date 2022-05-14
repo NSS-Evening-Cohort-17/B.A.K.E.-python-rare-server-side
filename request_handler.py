@@ -1,10 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-<<<<<<< HEAD
-from views import create_post, get_all_posts, get_single_post, update_post
-=======
-from views import create_post, get_all_posts, get_single_post, get_all_posts_by_user
->>>>>>> main
+from views import create_post, get_all_posts, get_single_post, get_all_posts_by_user, update_post
 from views.user_requests import create_user, login_user, get_all_users
 
 
