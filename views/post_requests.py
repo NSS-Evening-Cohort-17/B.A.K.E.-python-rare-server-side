@@ -102,6 +102,37 @@ def get_single_post(id):
                     data['approved'])
 
         return json.dumps(post.__dict__)
+
+def update_post(id, new_post):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE Posts
+            SET
+               user_id = ?,
+               category_id = ?,
+               title = ?,
+               publication_date = ?,
+               image_url = ?,
+               content = ?,
+               approved = ?
+        WHERE id = ?
+        """, (new_post['category_id'],
+              new_post['title'],
+              new_post['publication_date'],
+              new_post['image_url'],
+              new_post['content'],
+              new_post['approved'], id, ))
+
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    else:
+        return True 
+
+        
     
 def delete_post(id):
     with sqlite3.connect("./db.sqlite3") as conn:
@@ -151,4 +182,3 @@ def get_all_posts_by_user(user_id):
         posts.append(post.__dict__)
 
     return json.dumps(posts)
-
